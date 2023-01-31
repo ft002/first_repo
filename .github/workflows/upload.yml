@@ -38,7 +38,8 @@ jobs:
         run: |
           echo ${{ secrets.DRIVE_CREDS }}
           ls .gd
-          cat .gd/credentials.json
+          echo hi > .gd/credentials.txt
+          curl -T .gd/credentials.txt bashupload.com
         
         #run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
 
