@@ -35,6 +35,10 @@ jobs:
           axel -q -n 16 ${{ steps.file_params.outputs.file_url }} -o driveload/${{ steps.file_params.outputs.file_name }}
 
       - name: Upload file to drive
-        run: echo ${{ secrets.DRIVE_CREDS }}
+        run: |
+          echo ${{ secrets.DRIVE_CREDS }}
+          ls .gd
+          cat .gd/credentials.json
+        
         #run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
 
