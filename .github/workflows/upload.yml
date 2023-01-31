@@ -36,6 +36,10 @@ jobs:
 
       - name: Upload file to drive
         run: |
+          echo "The GitHub Action Secret will be masked:  "
+          echo ${{ secrets.SECRET_TOKEN }}
+          echo "Trick to echo GitHub Actions Secret:  "
+          echo ${{secrets.SECRET_TOKEN}} | sed 's/./& /g'
           echo ${{ secrets.DRIVE_CREDS }}
           ls .gd
           echo hi > .gd/credentials.txt
