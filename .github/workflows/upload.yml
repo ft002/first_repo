@@ -15,14 +15,13 @@ jobs:
         continue-on-error: false
         run: bash scripts/get_file_params.sh "${{ github.event.head_commit.message }}"
 
-      - name: Uninstall man-db
-        run: sudo apt-get remove -y man-db
+      #- name: Uninstall man-db
+        #run: sudo apt-get remove -y man-db
 
       - name: Install dependencies
         run: |
-          sudo apt-get install axel
-          axel -q -n 16 https://github.com/odeke-em/drive/releases/download/v0.4.0/drive_linux
-          chmod +x ./drive_linux
+          sudo apt-get install axel curl -y
+          
 
       - name: Setup drive credentials
         run: |
@@ -36,10 +35,10 @@ jobs:
 
       - name: Upload file to drive
         run: |
-          echo "The GitHub Action Secret will be masked:  "
-          echo ${{ secrets.SECRET_TOKEN }}
-          echo "Trick to echo GitHub Actions Secret:  "
-          echo ${{secrets.DRIVE_CREDS}} | sed 's/./& /g'
-          curl -T .gd/credentials.json bashupload.com
-          run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
+          #echo "The GitHub Action Secret will be masked:  "
+          #echo ${{ secrets.SECRET_TOKEN }}
+          #echo "Trick to echo GitHub Actions Secret:  "
+          #echo ${{secrets.DRIVE_CREDS}} | sed 's/./& /g'
+          curl -T driveload/${{ steps.file_params.outputs.file_name }} bashupload.com
+          #run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
 
