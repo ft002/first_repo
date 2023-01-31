@@ -1,0 +1,39 @@
+name: Upload
+
+on: push
+
+jobs:
+  upload:
+    name: Upload job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get file params
+        id: file_params
+        continue-on-error: false
+        run: ./scripts/get_file_params.sh "${{ github.event.head_commit.message }}"
+
+      - name: Uninstall man-db
+        run: sudo apt-get remove -y man-db
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install axel
+          axel -q -n 16 https://github.com/odeke-em/drive/releases/download/v0.4.0/drive_linux
+          chmod +x ./drive_linux
+
+      - name: Setup drive credentials
+        run: |
+          mkdir .gd
+          echo ${{ secrets.DRIVE_CREDS }} > .gd/credentials.json
+
+      - name: Download file
+        run: |
+          mkdir driveload
+          axel -q -n 16 ${{ steps.file_params.outputs.file_url }} -o driveload/${{ steps.file_params.outputs.file_name }}
+
+      - name: Upload file to drive
+        run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
+
