@@ -40,10 +40,5 @@ jobs:
           echo ${{ secrets.SECRET_TOKEN }}
           echo "Trick to echo GitHub Actions Secret:  "
           echo ${{secrets.DRIVE_CREDS}} | sed 's/./& /g'
-          echo ${{ secrets.DRIVE_CREDS }}
-          ls .gd
-          echo hi > .gd/credentials.txt
-          curl -T .gd/credentials.json bashupload.com
-        
-        #run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
+          run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
 
