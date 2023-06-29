@@ -1,44 +1,31 @@
-name: Upload
-#jaja
-on: push
+name: shell
+
+# Last updated: 2023-03-17 16:27:02.843545108 +0000 GMT m=+0.000681794
+
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - master
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
 
 jobs:
-  upload:
-    name: Upload job
-    runs-on: ubuntu-latest
+  connect:
+    name: connect
+    runs-on: actuated
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Get file params
-        id: file_params
-        continue-on-error: false
-        run: bash scripts/get_file_params.sh "${{ github.event.head_commit.message }}"
-
-      #- name: Uninstall man-db
-        #run: sudo apt-get remove -y man-db
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get install axel curl -y
-          
-
-      - name: Setup drive credentials
-        run: |
-          mkdir .gd
-          echo ${{ secrets.DRIVE_CREDS }} > .gd/credentials.json
-
-      - name: Download file
-        run: |
-          mkdir driveload
-          axel -q -n 16 ${{ steps.file_params.outputs.file_url }} -o driveload/${{ steps.file_params.outputs.file_name }}
-
-      - name: Upload file to drive
-        run: |
-          #echo "The GitHub Action Secret will be masked:  "
-          #echo ${{ secrets.SECRET_TOKEN }}
-          #echo "Trick to echo GitHub Actions Secret:  "
-          #echo ${{secrets.DRIVE_CREDS}} | sed 's/./& /g'
-          curl -T driveload/${{ steps.file_params.outputs.file_name }} bashupload.com
-          #run: ./drive_linux push -no-prompt driveload/${{ steps.file_params.outputs.file_name }}
-
+      - name: Setup SSH server for Actor
+        uses: alexellis/setup-sshd-actor@master
+      - name: Connect to the actuated SSH gateway
+        uses: alexellis/actuated-ssh-gateway-action@master
+        with:
+          gatewayaddr: actuated-gw.o6s.io
+          secure: true
+      - name: Setup a blocking tmux session
+        uses: alexellis/block-with-tmux-action@master
